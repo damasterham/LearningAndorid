@@ -6,11 +6,17 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class Dude
 {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private long id;
 
     private String name;
     private String nickName;
+
+    public Dude(String name, String nickName)
+    {
+        this.name = name;
+        this.nickName = nickName;
+    }
 
     public long getId()
     {
