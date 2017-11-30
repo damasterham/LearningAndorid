@@ -15,10 +15,10 @@ public interface DudeDao
     @Query("SELECT * FROM dude")
     List<Dude> getAll();
 
-    @Query("SELECT * FROM dude WHERE id IN (:userIds)")
-    List<Dude> loadAllByIds(long[] userIds);
+    @Query("SELECT * FROM dude WHERE id IN (:ids)")
+    List<Dude> loadAllByIds(long[] ids);
 
-    @Query("SELECT * FROM dude WHERE id = :userId")
+    @Query("SELECT * FROM dude WHERE id = :id")
     Dude findById(long id);
 
     @Query("SELECT * FROM dude WHERE name LIKE :name")
@@ -31,8 +31,8 @@ public interface DudeDao
     void insert(Dude dude);
 
     @Delete
-    void delete(Dude dude);
+    void deleteByIds(Dude... dudes);
 
     @Delete
-    void deleteAll();
+    void delete(Dude dude);
 }
