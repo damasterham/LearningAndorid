@@ -9,10 +9,12 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import damasterham.learningandroid.data.AppDb;
 import damasterham.learningandroid.data.dao.DudeDao;
 import damasterham.learningandroid.data.entitiy.Dude;
+import damasterham.learningandroid.utility.ThreadExecutor;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // Build DB
         mAppDb = Room.databaseBuilder(this, AppDb.class, DB_NAME).build();
@@ -59,23 +62,23 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                List<Dude> dudes = mDudeDao.getAll();
+                final List<Dude> dudes = mDudeDao.getAll();
 
                 runOnUiThread(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-//                        TextView tv = findViewById(R.id.hellotext);
-//                        tv.setText("");
-//
-//                        for (Dude dude: dudes)
-//                        {
-//                            tv.append(dude.getName());
-//                            tv.append("\n");
-//                            tv.append(dude.getNickName());
-//                            tv.append("\n\n");
-//                        }
+                        TextView tv = findViewById(R.id.hellotext);
+                        tv.setText("");
+
+                        for (Dude dude: dudes)
+                        {
+                            tv.append(dude.getName());
+                            tv.append("\n");
+                            tv.append(dude.getNickName());
+                            tv.append("\n\n");
+                        }
                     }
                 });
 
