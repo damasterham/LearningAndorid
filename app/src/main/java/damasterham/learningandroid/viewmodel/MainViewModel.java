@@ -1,34 +1,39 @@
 package damasterham.learningandroid.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.arch.persistence.room.Room;
-import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Nonnull;
+
+import damasterham.learningandroid.App;
 import damasterham.learningandroid.data.AppDb;
 import damasterham.learningandroid.data.dao.DudeDao;
 import damasterham.learningandroid.data.entitiy.Dude;
-import damasterham.learningandroid.utility.ThreadExecutor;
 
-public class MainViewModel extends ViewModel
+public class MainViewModel extends AndroidViewModel
 {
-    private static final String DB_NAME = "sampledb";
 
-    AppDb db;
+    AppDb appDb;
     DudeDao dudeDao;
     Executor ex;
 
-    LiveData<List<Dude>> dudes;
+    List<Dude> dudes;
 
-    public MainViewModel(Context context)
+    public MainViewModel(@NonNull Application application)
     {
-        db = Room.databaseBuilder(context, AppDb.class, DB_NAME).build();
-        dudeDao = db.dudeDao();
-        ex = new ThreadExecutor();
+        super(application);
+    }
 
+    public void initialize()
+    {
+        appDb = getApp().getAppDb();
+        dudeDao = appDb.dudeDao();
+        ex = getApp().getExecutor();
 
         // Get dudes
         ex.execute(new Runnable()
@@ -37,24 +42,29 @@ public class MainViewModel extends ViewModel
             public void run()
             {
                 dudes = dudeDao.getAll();
+
+                // If none, initialize som data
+                if (dudes.getValue().size() == 0)
+                {
+                    ex.execute(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            dudeDao.insertAll(new Dude("Bente", "SuperBente"),
+                                    new Dude("Jens", "HammerJens"),
+                                    new Dude("Erik", "ErikVonPopidan"));
+                            //Log.d("Dudes created", "onCreate: added " + mDudeDao.getAll().toString());
+                        }
+                    });
+                }
             }
         });
+    }
 
-        // If none, initialize som data
-        if (dudes.getValue().size() == 0)
-        {
-            ex.execute(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    dudeDao.insertAll(new Dude("Bente", "SuperBente"),
-                            new Dude("Jens", "HammerJens"),
-                            new Dude("Erik", "ErikVonPopidan"));
-                    //Log.d("Dudes created", "onCreate: added " + mDudeDao.getAll().toString());
-                }
-            });
-        }
+    private App getApp()
+    {
+        return (App)getApplication();
     }
 
     public LiveData<List<Dude>> getDudes()

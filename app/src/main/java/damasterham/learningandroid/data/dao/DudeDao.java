@@ -13,11 +13,21 @@ import damasterham.learningandroid.data.entitiy.Dude;
 @Dao
 public interface DudeDao
 {
-    @Query("SELECT * FROM dude")
-    LiveData<List<Dude>> getAll();
+    String GET_ALL = "SELECT * FROM dude";
+    String LOAD_ALL_BY_IDS = "SELECT * FROM dude WHERE id IN (:ids)";
 
-    @Query("SELECT * FROM dude WHERE id IN (:ids)")
-    LiveData<List<Dude>> loadAllByIds(long[] ids);
+    @Query(GET_ALL)
+    LiveData<List<Dude>> getAllAsLiveData();
+
+    @Query(GET_ALL)
+    List<Dude> getAll();
+
+    @Query(LOAD_ALL_BY_IDS)
+    LiveData<List<Dude>> loadAllByIdsAsLiveData(long[] ids);
+
+    @Query(LOAD_ALL_BY_IDS)
+    List<Dude> loadAllByIds(long[] ids);
+
 
     @Query("SELECT * FROM dude WHERE id = :id")
     Dude findById(long id);

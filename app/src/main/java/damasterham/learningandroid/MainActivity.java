@@ -1,5 +1,6 @@
 package damasterham.learningandroid;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
@@ -31,9 +32,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-
+        viewModel.initialize();
         final TextView tv = findViewById(R.id.hellotext);
-        viewModel.getDudes().observe(this, new Observer<List<Dude>>()
+        viewModel.getDudes().observe(this, listAdapter //new Observer<List<Dude>>()
         {
             @Override
             public void onChanged(@Nullable List<Dude> dudes)
