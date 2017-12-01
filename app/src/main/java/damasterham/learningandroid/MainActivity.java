@@ -1,6 +1,9 @@
 package damasterham.learningandroid;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,13 +18,11 @@ import damasterham.learningandroid.data.AppDb;
 import damasterham.learningandroid.data.dao.DudeDao;
 import damasterham.learningandroid.data.entitiy.Dude;
 import damasterham.learningandroid.utility.ThreadExecutor;
+import damasterham.learningandroid.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity
 {
-    private static final String DB_NAME = "sampledb";
-
-    private AppDb mAppDb;
-    private DudeDao mDudeDao;
+    MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,27 +30,25 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        // Build DB
-        mAppDb = Room.databaseBuilder(this, AppDb.class, DB_NAME).build();
-        mDudeDao = mAppDb.dudeDao();
-
-        new Thread(new Runnable()
+        final TextView tv = findViewById(R.id.hellotext);
+        viewModel.getDudes().observe(this, new Observer<List<Dude>>()
         {
             @Override
-            public void run()
+            public void onChanged(@Nullable List<Dude> dudes)
             {
-                // Initialize some dudes
-                if (mDudeDao.getAll().size() == 0)
+                tv.setText("");
+
+                for (Dude dude: dudes)
                 {
-                    mDudeDao.insertAll(new Dude("Bente", "SuperBente"),
-                            new Dude("Jens", "HammerJens"),
-                            new Dude("Erik", "ErikVonPopidan"));
-                    //Log.d("Dudes created", "onCreate: added " + mDudeDao.getAll().toString());
+                    tv.append(dude.getName());
+                    tv.append("\n");
+                    tv.append(dude.getNickName());
+                    tv.append("\n\n");
                 }
             }
-        }).start();
-
+        });
     }
 
     @Override
@@ -57,34 +56,6 @@ public class MainActivity extends AppCompatActivity
     {
         super.onStart();
 
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                final List<Dude> dudes = mDudeDao.getAll();
-
-                runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        TextView tv = findViewById(R.id.hellotext);
-                        tv.setText("");
-
-                        for (Dude dude: dudes)
-                        {
-                            tv.append(dude.getName());
-                            tv.append("\n");
-                            tv.append(dude.getNickName());
-                            tv.append("\n\n");
-                        }
-                    }
-                });
-
-
-            }
-        }).start();
     }
 
 }

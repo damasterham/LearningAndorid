@@ -1,5 +1,6 @@
 package damasterham.learningandroid.data.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -13,10 +14,10 @@ import damasterham.learningandroid.data.entitiy.Dude;
 public interface DudeDao
 {
     @Query("SELECT * FROM dude")
-    List<Dude> getAll();
+    LiveData<List<Dude>> getAll();
 
     @Query("SELECT * FROM dude WHERE id IN (:ids)")
-    List<Dude> loadAllByIds(long[] ids);
+    LiveData<List<Dude>> loadAllByIds(long[] ids);
 
     @Query("SELECT * FROM dude WHERE id = :id")
     Dude findById(long id);
