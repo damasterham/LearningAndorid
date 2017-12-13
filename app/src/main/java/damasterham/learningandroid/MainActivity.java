@@ -32,15 +32,23 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.initialize();
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
         final TextView tv = findViewById(R.id.hellotext);
-        viewModel.getDudes().observe(this, listAdapter //new Observer<List<Dude>>()
+        tv.setText("");
+
+        final List<Dude> dudes = viewModel.getDudes();
+
+        runOnUiThread(new Runnable()
         {
             @Override
-            public void onChanged(@Nullable List<Dude> dudes)
+            public void run()
             {
-                tv.setText("");
-
                 for (Dude dude: dudes)
                 {
                     tv.append(dude.getName());
@@ -50,15 +58,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
 
     }
-
 }
 
 
