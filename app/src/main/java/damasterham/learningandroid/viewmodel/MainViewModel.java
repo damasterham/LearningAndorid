@@ -59,18 +59,11 @@ public class MainViewModel extends AndroidViewModel
                 // If none, initialize som data
                 if (tempDudes == null || tempDudes.size() == 0)
                 {
-                    ex.execute(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            dudeDao.insertAll(new Dude("Bente", "SuperBente"),
+                    dudeDao.insertAll(new Dude("Bente", "SuperBente"),
                                     new Dude("Jens", "HammerJens"),
                                     new Dude("Erik", "ErikVonPopidan"));
                             //Log.d("Dudes created", "onCreate: added " + mDudeDao.getAll().toString());
-                            dudes = dudeDao.getAll();
-                        }
-                    });
+                    dudes = dudeDao.getAll();
                 }
                 else
                     dudes = tempDudes;
@@ -85,8 +78,6 @@ public class MainViewModel extends AndroidViewModel
 
     public List<Dude> getDudes()
     {
-        if (dudes == null)
-            return new ArrayList<Dude>();
         return dudes;
     }
 }

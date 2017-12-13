@@ -5,8 +5,10 @@ import android.arch.persistence.room.Room;
 import android.content.Intent;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.RecursiveTask;
 
 import damasterham.learningandroid.data.AppDb;
+import damasterham.learningandroid.rest.RestService;
 import damasterham.learningandroid.utility.ThreadExecutor;
 
 public class App extends Application
@@ -33,5 +35,10 @@ public class App extends Application
     public Executor getExecutor()
     {
         return executor;
+    }
+
+    public RestService getRestService()
+    {
+        return RestService.getInstance();
     }
 }
